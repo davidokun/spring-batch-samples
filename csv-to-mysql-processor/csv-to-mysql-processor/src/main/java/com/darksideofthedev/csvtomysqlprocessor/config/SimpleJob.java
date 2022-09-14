@@ -21,6 +21,7 @@ public class SimpleJob {
     public Job firstSimpleJob() {
         return jobBuilderFactory.get("First Simple job")
                 .start(firstStep())
+                .next(secondStep())
                 .build();
     }
 
@@ -33,6 +34,19 @@ public class SimpleJob {
     private Tasklet firstTask() {
         return (stepContribution, chunkContext) -> {
             System.out.println("This is the first tasklet step");
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    private Step secondStep() {
+        return stepBuilderFactory.get("Second Step")
+                .tasklet(secondTask())
+                .build();
+    }
+
+    private Tasklet secondTask() {
+        return (stepContribution, chunkContext) -> {
+            System.out.println("This is the second tasklet step");
             return RepeatStatus.FINISHED;
         };
     }
