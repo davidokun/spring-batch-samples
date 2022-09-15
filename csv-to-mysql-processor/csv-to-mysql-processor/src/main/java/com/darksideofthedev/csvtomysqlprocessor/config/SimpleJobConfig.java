@@ -1,21 +1,23 @@
 package com.darksideofthedev.csvtomysqlprocessor.config;
 
+import com.darksideofthedev.csvtomysqlprocessor.task.FirstSimpleTask;
+import com.darksideofthedev.csvtomysqlprocessor.task.SecondSimpleTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class SimpleJob {
+public class SimpleJobConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final FirstSimpleTask firstSimpleTask;
+    private final SecondSimpleTask secondSimpleTask;
 
     @Bean
     public Job firstSimpleJob() {
@@ -27,27 +29,13 @@ public class SimpleJob {
 
     private Step firstStep() {
         return stepBuilderFactory.get("First Step")
-                .tasklet(firstTask())
+                .tasklet(firstSimpleTask)
                 .build();
-    }
-
-    private Tasklet firstTask() {
-        return (stepContribution, chunkContext) -> {
-            System.out.println("This is the first tasklet step");
-            return RepeatStatus.FINISHED;
-        };
     }
 
     private Step secondStep() {
         return stepBuilderFactory.get("Second Step")
-                .tasklet(secondTask())
+                .tasklet(secondSimpleTask)
                 .build();
-    }
-
-    private Tasklet secondTask() {
-        return (stepContribution, chunkContext) -> {
-            System.out.println("This is the second tasklet step");
-            return RepeatStatus.FINISHED;
-        };
     }
 }
