@@ -1,6 +1,7 @@
 package com.darksideofthedev.csvtomysqlprocessor.config;
 
 import com.darksideofthedev.csvtomysqlprocessor.listener.FirstJobListener;
+import com.darksideofthedev.csvtomysqlprocessor.listener.FirstStepListener;
 import com.darksideofthedev.csvtomysqlprocessor.task.FirstSimpleTask;
 import com.darksideofthedev.csvtomysqlprocessor.task.SecondSimpleTask;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,13 @@ public class SimpleJobConfig {
     private final FirstSimpleTask firstSimpleTask;
     private final SecondSimpleTask secondSimpleTask;
     private final FirstJobListener firstJobListener;
+    private final FirstStepListener firstStepListener;
 
     @Bean
     public Job firstSimpleJob() {
         return jobBuilderFactory.get("First Simple job")
                 .incrementer(new RunIdIncrementer())
-                .listener(firstJobListener )
+                .listener(firstJobListener)
                 .start(firstStep())
                 .next(secondStep())
                 .build();
@@ -34,6 +36,7 @@ public class SimpleJobConfig {
 
     private Step firstStep() {
         return stepBuilderFactory.get("First Step")
+                .listener(firstStepListener)
                 .tasklet(firstSimpleTask)
                 .build();
     }
